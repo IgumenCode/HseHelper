@@ -1,7 +1,7 @@
 import bs4
 #Функции парсинга
 
-def extract_course_urls(page: str) -> list[str]:  # Находит все ссылки на курсы на одной странице
+def extract_course_urls(page: str) -> list[str]:  # Возвращает список со всеми ссылками на курсы с данной страницы
     links = []
     soup = bs4.BeautifulSoup(page, "html.parser")
     content_block = soup.find("div", class_="content__inner")
@@ -21,7 +21,7 @@ def extract_course_urls(page: str) -> list[str]:  # Находит все ссы
     return links
 
 
-def extract_next_page_urls(base_page: str) -> list[str]:  # Находит ссылки на следующие страницы с курсами, возвращает пустой список если не находит
+def extract_next_page_urls(base_page: str) -> list[str]:  # Возвращает список с ссылками на следующие страницы с курсами, возвращает пустой список если не находит
     next_pages_urls = []
     soup = bs4.BeautifulSoup(base_page, "html.parser")
     indent3 = soup.find("div", class_="with-indent3")
@@ -32,17 +32,17 @@ def extract_next_page_urls(base_page: str) -> list[str]:  # Находит сс�
         next_pages_urls.append(i.get("href"))
     return next_pages_urls
 
-def extract_course_content(course_page: str) -> dict[str, str]: #Возвращает словарь {"Название программы": "Описание программы"}
+def extract_course_content(course_page: str) -> dict[str, str]:  #Возвращает словарь {"Название курса": "Описание курса"}
     soup = bs4.BeautifulSoup(course_page, "html.parser")
     program_header = soup.find("div", class_="b-program__header")
     if not program_header:
         raise RuntimeError('Не обнаружено блока "b-program__header"')
     course_title = program_header.find("h1", class_="b-program__header-title").get_text(separator=" ", strip=True)
-    print(course_title)
     course_content = program_header.find("div", class_="b-program__header-info").get_text(separator=" ", strip=True)
     program_comment = soup.find("div", class_="b-program__comment b-program__block")
     if not program_comment:
         raise RuntimeError('Не обнаружено блока "b-program__comment b-program__block"')
     program_comment_text = program_comment.get_text(separator=" ", strip=True)
-    course_content += " ".join(program_comment_text)
+    course_content = f"{course_content} {program_comment_text}"
     return {"title": course_title, "content" : course_content}
+
