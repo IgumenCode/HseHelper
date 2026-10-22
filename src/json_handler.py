@@ -36,7 +36,7 @@ def parse_and_save_courses(BASE_URL: str, OUTPUT_FILE: str, hse_client: https_cl
         json.dump(all_courses, f, ensure_ascii=False, indent=4)
 
 #Возвращает список ["ID - title"]
-def get_all_titles(json_patn: str) -> dict[str]:
+def get_all_titles(json_patn: str) -> list[str]:
     with open(json_patn, "r", encoding="UTF-8") as f:
         courses = json.load(f)
     all_titles = []
@@ -49,6 +49,11 @@ def get_content(json_patn: str, ids: list[int]) -> list[str]:
     with open(json_patn, "r", encoding="UTF-8") as f:
         courses = json.load(f)
     content = []
+    if len(ids) == 0:
+        for id in range(0, len(courses)):
+            content.append(' '.join(map(str, (courses[id].values()))))
+        return content
+
     for id in ids:
         content.append(' '.join(map(str, (courses[id].values()) )))
     return content
